@@ -65,12 +65,14 @@ pub fn create_weather_client(env_data: &EnvData) -> Client {
 
 pub fn get_current_weather(env_data: &EnvData, client: &Client) -> String {
     let url = OBSERVATION_DATA_URL.replace("{station}", &env_data.weather_station);
+    dbg!(&url);
     let json_str = client.get(url)
         .query(&[("limit", "1")])
         .send()
         .expect("failed to make current observation request")
         .text()
         .expect("failed to get text from current observation request");
+    dbg!(&json_str);
 
     return json_str
 }
@@ -81,6 +83,7 @@ pub fn parse_current_weather(json_str: &str) -> CurrentWeather {
 
     //println!("current weather");
     //println!("{:#?}", data);
+    dbg!(&data);
 
     let data = &data["features"][0]["properties"];
 
@@ -108,6 +111,7 @@ pub fn parse_current_weather(json_str: &str) -> CurrentWeather {
 pub fn get_daily_forecast(env_data: &EnvData, client: &Client) -> String {
     let url = DAILY_FORECAST_URL.replace("{office}", &env_data.weather_office)
         .replace("{gridpoint}", &env_data.weather_gridpoint);
+    dbg!(&url);
     let json_str = client.get(url).send()
         .expect("failed to make daily forecast request")
         .text()
@@ -121,9 +125,10 @@ pub fn parse_daily_forecast(json_str: &str) -> Vec<ForecastPeriod> {
         .expect("failed to parse hourly forecast json");
 
     println!("debug data:\n{:#?}", data);
+    dbg!(&data);
 
     let periods = data["properties"]["periods"].as_array()
-        .expect("properties.periods was not an array");
+        .expect(&format!("{} properties.periods was not an array",data));
 
     let mut output = Vec::new();
     for period in periods {
@@ -164,6 +169,7 @@ pub fn parse_daily_forecast(json_str: &str) -> Vec<ForecastPeriod> {
 pub fn get_hourly_forecast(env_data: &EnvData, client: &Client) -> String {
     let url = HOURLY_FORECAST_URL.replace("{office}", &env_data.weather_office)
         .replace("{gridpoint}", &env_data.weather_gridpoint);
+    dbg!(&url);
     let json_str = client.get(url).send()
         .expect("failed to make hourly forecast request")
         .text()
@@ -177,7 +183,7 @@ pub fn parse_hourly_forecast(json_str: &str) -> Vec<ForecastPeriod> {
         .expect("failed to parse hourly forecast json");
 
     let periods = data["properties"]["periods"].as_array()
-        .expect("properties.periods was not an array");
+        .expect(&format!("{} properties.periods was not an array",data));
 
     let mut output = Vec::new();
     for period in periods {

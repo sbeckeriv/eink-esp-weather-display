@@ -9,6 +9,17 @@ pub struct EnvData {
     pub weather_office: String,
     pub weather_gridpoint: String,
 }
+/*
+{
+'local_timezone':'PST',
+'user_agent':'User-Agent: (becker, becker@deathbyescalator.com)',
+'task_api_key':'',
+'weather_station':'KNUW',
+'weather_office':'SEW',
+'weather_gridpoint':'217,68'
+}
+
+   */
 
 impl EnvData {
     pub fn from_file(path: &Path) -> EnvData {
